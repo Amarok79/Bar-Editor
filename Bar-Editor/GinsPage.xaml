@@ -1,0 +1,69 @@
+﻿<Page
+	x:Class="Bar.GinsPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:i="using:Microsoft.Xaml.Interactivity"
+	xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	mc:Ignorable="d">
+
+	<i:Interaction.Behaviors>
+		<ic:EventTriggerBehavior EventName="Loaded">
+			<ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadGinsCommand}" />
+		</ic:EventTriggerBehavior>
+	</i:Interaction.Behaviors>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="2*" />
+		</Grid.ColumnDefinitions>
+
+		<ListView
+			Grid.Column="0"
+			HorizontalAlignment="Stretch"
+			BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+			BorderThickness="0"
+			DisplayMemberPath="Name"
+			ItemsSource="{x:Bind ViewModel.Gins}"
+			SelectedItem="{x:Bind ViewModel.SelectedGin, Mode=TwoWay}">
+		</ListView>
+
+		<StackPanel
+			Grid.Column="1"
+			Margin="24"
+			Orientation="Vertical"
+			Visibility="{x:Bind ViewModel.SelectedGin, Mode=OneWay, Converter={StaticResource HideWhenNullConverter}}">
+
+			<TextBox
+				Header="Name"
+				Text="{x:Bind ViewModel.SelectedGin.Name, Mode=TwoWay, FallbackValue=''}">
+			</TextBox>
+			<TextBox
+				Margin="0,20,0,0"
+				Header="Teaser"
+				Text="{x:Bind ViewModel.SelectedGin.Teaser, Mode=TwoWay, FallbackValue=''}">
+			</TextBox>
+			<TextBox
+				Margin="0,20,0,0"
+				Header="Images"
+				Text="{x:Bind ViewModel.SelectedGin.ImagesAsText, Mode=TwoWay, FallbackValue=''}">
+			</TextBox>
+
+			<Button
+				Margin="0,20,0,0"
+				HorizontalAlignment="Right"
+				AccessKey="S"
+				Command="{x:Bind ViewModel.SaveCommand}"
+				Content="Save"
+				Style="{StaticResource AccentButtonStyle}">
+			</Button>
+
+		</StackPanel>
+
+
+	</Grid>
+
+</Page>

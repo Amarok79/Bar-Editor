@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Bar-Editor (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Bar-Editor (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
