@@ -34,6 +34,7 @@
 			<NavigationViewItem
 				AccessKey="G"
 				Content="Gins"
+				IsSelected="True"
 				Tag="GINS">
 				<NavigationViewItem.Icon>
 					<SymbolIcon Symbol="Globe" />
