@@ -11,14 +11,18 @@ using CommunityToolkit.Mvvm.Input;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 
-namespace Bar;
+namespace Bar.Pages;
 
 public class GinsPageViewModel : ObservableObject
 {
     private readonly IConfiguration mConfiguration;
 
+
+    public XamlRoot XamlRoot { get; set; }
 
     public ObservableCollection<GinDto> Gins { get; } = new();
 
@@ -30,9 +34,14 @@ public class GinsPageViewModel : ObservableObject
         set => SetProperty(ref mSelectedGin, value);
     }
 
+
     public IAsyncRelayCommand LoadGinsCommand { get; }
 
     public IAsyncRelayCommand SaveCommand { get; }
+
+    public IAsyncRelayCommand AddCommand { get; }
+
+    public IAsyncRelayCommand DeleteCommand { get; }
 
 
     public GinsPageViewModel(IConfiguration configuration)
@@ -41,6 +50,8 @@ public class GinsPageViewModel : ObservableObject
 
         LoadGinsCommand = new AsyncRelayCommand(_LoadGinsAsync);
         SaveCommand     = new AsyncRelayCommand(_SaveGinAsync);
+        AddCommand      = new AsyncRelayCommand(_AddGinAsync);
+        DeleteCommand   = new AsyncRelayCommand(_DeleteGinAsync);
     }
 
 
@@ -68,6 +79,56 @@ public class GinsPageViewModel : ObservableObject
         await url.AppendPathSegments("api", "gins", SelectedGin.Id)
            .WithHeader("Api-Key", apiKey)
            .PutJsonAsync(SelectedGin);
+    }
+
+    private async Task _AddGinAsync()
+    {
+        var url    = mConfiguration.GetValue<String>("Backend:Url");
+        var apiKey = mConfiguration.GetValue<String>("Backend:ApiKey");
+
+        var gin = new GinDto {
+            Id     = Guid.NewGuid(),
+            Name   = "Unbenannt",
+            Teaser = "",
+            Images = new List<String>(),
+        };
+
+        await url.AppendPathSegments("api", "gins", gin.Id)
+           .WithHeader("Api-Key", apiKey)
+           .PutJsonAsync(gin);
+
+        Gins.Add(gin);
+        SelectedGin = gin;
+    }
+
+    private async Task _DeleteGinAsync()
+    {
+        if (SelectedGin is null)
+            return;
+
+        var url    = mConfiguration.GetValue<String>("Backend:Url");
+        var apiKey = mConfiguration.GetValue<String>("Backend:ApiKey");
+
+
+
+        var dialog = new ContentDialog {
+            Title             = "Delete?",
+            Content           = $"Delete '{SelectedGin.Name}'?",
+            PrimaryButtonText = "Delete",
+            CloseButtonText   = "Cancel",
+            XamlRoot          = XamlRoot,
+        };
+
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.None)
+            return;
+
+        await url.AppendPathSegments("api", "gins", SelectedGin.Id)
+           .WithHeader("Api-Key", apiKey)
+           .DeleteAsync();
+
+        Gins.Remove(SelectedGin);
     }
 
 

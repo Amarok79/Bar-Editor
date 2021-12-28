@@ -4,7 +4,7 @@ using System;
 using Microsoft.UI.Xaml.Controls;
 
 
-namespace Bar;
+namespace Bar.Pages;
 
 public sealed partial class GinsPage : Page
 {
@@ -14,6 +14,13 @@ public sealed partial class GinsPage : Page
     public GinsPage()
     {
         InitializeComponent();
+
         DataContext = App.Current.CreateViewModel<GinsPageViewModel>();
+        Loaded += _GinsPage_Loaded;
+    }
+
+    private void _GinsPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        ViewModel.XamlRoot = XamlRoot;
     }
 }

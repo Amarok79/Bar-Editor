@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2021, Olaf Kober <olaf.kober@outlook.com>
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
+using Bar.Pages;
 using Microsoft.UI.Xaml.Controls;
 
 
@@ -19,7 +19,7 @@ public sealed partial class MainPage : Page
     {
         var item = args.SelectedItem as NavigationViewItem;
 
-        if (Equals(item.Tag, "GINS"))
+        if (Equals(item?.Tag, "GINS"))
             Frame.Navigate(typeof(GinsPage));
         else
             Frame.Content = null;
