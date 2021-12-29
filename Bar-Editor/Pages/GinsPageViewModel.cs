@@ -3,11 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI.UI;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +25,8 @@ public class GinsPageViewModel : ObservableObject
 
     public ObservableCollection<GinDto> Gins { get; } = new();
 
+    public AdvancedCollectionView GinsCollection { get; set; }
+
     private GinDto? mSelectedGin;
 
     public GinDto? SelectedGin
@@ -36,22 +37,36 @@ public class GinsPageViewModel : ObservableObject
 
 
     public IAsyncRelayCommand LoadGinsCommand { get; }
+    
+    public IAsyncRelayCommand RefreshCommand { get; }
 
     public IAsyncRelayCommand SaveCommand { get; }
 
     public IAsyncRelayCommand AddCommand { get; }
 
+    public IAsyncRelayCommand EditCommand { get; }
+
     public IAsyncRelayCommand DeleteCommand { get; }
+
+    public IAsyncRelayCommand PublishCommand { get; }
+
+    public IAsyncRelayCommand UnPublishCommand { get; }
 
 
     public GinsPageViewModel(IConfiguration configuration)
     {
         mConfiguration = configuration;
 
-        LoadGinsCommand = new AsyncRelayCommand(_LoadGinsAsync);
-        SaveCommand     = new AsyncRelayCommand(_SaveGinAsync);
-        AddCommand      = new AsyncRelayCommand(_AddGinAsync);
-        DeleteCommand   = new AsyncRelayCommand(_DeleteGinAsync);
+        LoadGinsCommand  = new AsyncRelayCommand(_LoadGinsAsync);
+        RefreshCommand  = new AsyncRelayCommand(_LoadGinsAsync);
+        SaveCommand      = new AsyncRelayCommand(_SaveGinAsync);
+        AddCommand       = new AsyncRelayCommand(_AddGinAsync);
+        DeleteCommand    = new AsyncRelayCommand(_DeleteGinAsync);
+        PublishCommand   = new AsyncRelayCommand(_PublishGinAsync);
+        UnPublishCommand = new AsyncRelayCommand(_UnPublishGinAsync);
+
+        GinsCollection = new AdvancedCollectionView(Gins, true);
+        GinsCollection.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending));
     }
 
 
@@ -62,7 +77,10 @@ public class GinsPageViewModel : ObservableObject
 
         var gins = await url.AppendPathSegment("/api/gins")
            .WithHeader("Api-Key", apiKey)
+           .SetQueryParam("includeDrafts", "true")
            .GetJsonAsync<GinDto[]>();
+
+        Gins.Clear();
 
         foreach (var x in gins)
             Gins.Add(x);
@@ -91,6 +109,7 @@ public class GinsPageViewModel : ObservableObject
             Name   = "Unbenannt",
             Teaser = "",
             Images = new List<String>(),
+            IsDraft = true,
         };
 
         await url.AppendPathSegments("api", "gins", gin.Id)
@@ -131,40 +150,41 @@ public class GinsPageViewModel : ObservableObject
         Gins.Remove(SelectedGin);
     }
 
-
-    public sealed class GinDto : ObservableValidator
+    private async Task _PublishGinAsync()
     {
-        public Guid Id { get; set; }
+        if (SelectedGin is null)
+            return;
 
+        var url    = mConfiguration.GetValue<String>("Backend:Url");
+        var apiKey = mConfiguration.GetValue<String>("Backend:ApiKey");
 
-        private String mName;
+        var gin = await url.AppendPathSegments("api", "gins", SelectedGin.Id)
+           .WithHeader("Api-Key", apiKey)
+           .GetJsonAsync<GinDto>();
 
-        [Required]
-        public String Name
-        {
-            get => mName;
-            set => SetProperty(ref mName, value, true);
-        }
+        gin.IsDraft = false;
 
-        private String mTeaser;
+        await url.AppendPathSegments("api", "gins", gin.Id)
+           .WithHeader("Api-Key", apiKey)
+           .PutJsonAsync(gin);
+    }
 
-        [Required]
-        public String Teaser
-        {
-            get => mTeaser;
-            set => SetProperty(ref mTeaser, value, true);
-        }
+    private async Task _UnPublishGinAsync()
+    {
+        if (SelectedGin is null)
+            return;
 
+        var url    = mConfiguration.GetValue<String>("Backend:Url");
+        var apiKey = mConfiguration.GetValue<String>("Backend:ApiKey");
 
-        public List<String> Images { get; set; }
+        var gin = await url.AppendPathSegments("api", "gins", SelectedGin.Id)
+           .WithHeader("Api-Key", apiKey)
+           .GetJsonAsync<GinDto>();
 
-        public String ImagesAsText
-        {
-            get => String.Join(", ", Images);
-            set =>
-                Images = value.Split(',')
-                   .Select(x => x.Trim())
-                   .ToList();
-        }
+        gin.IsDraft = true;
+
+        await url.AppendPathSegments("api", "gins", gin.Id)
+           .WithHeader("Api-Key", apiKey)
+           .PutJsonAsync(gin);
     }
 }

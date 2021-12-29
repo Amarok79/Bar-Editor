@@ -9,6 +9,7 @@
 
 	<NavigationView
 		AccessKey="X"
+		Background="{StaticResource AppBarBackgroundThemeBrush}"
 		IsBackButtonVisible="Collapsed"
 		IsPaneOpen="True"
 		IsPaneToggleButtonVisible="True"

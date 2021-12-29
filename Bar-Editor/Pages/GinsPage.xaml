@@ -6,8 +6,29 @@
 	xmlns:i="using:Microsoft.Xaml.Interactivity"
 	xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:t="using:Bar.Pages"
+	xmlns:uic="using:CommunityToolkit.WinUI.UI.Converters"
 	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	mc:Ignorable="d">
+
+	<Page.Resources>
+		<SymbolIconSource
+			x:Key="PinSymbol"
+			Symbol="Pin" />
+		<SymbolIconSource
+			x:Key="RepairSymbol"
+			Symbol="Repair" />
+		<uic:BoolToObjectConverter
+			x:Key="DraftSymbolConverter"
+			FalseValue="{StaticResource PinSymbol}"
+			TrueValue="{StaticResource RepairSymbol}">
+		</uic:BoolToObjectConverter>
+		<uic:BoolToObjectConverter
+			x:Key="DraftBrushConverter"
+			FalseValue="{StaticResource ApplicationForegroundThemeBrush}"
+			TrueValue="{StaticResource SystemControlForegroundAccentBrush}">
+		</uic:BoolToObjectConverter>
+	</Page.Resources>
 
 	<i:Interaction.Behaviors>
 		<ic:EventTriggerBehavior EventName="Loaded">
@@ -21,60 +42,152 @@
 			<ColumnDefinition Width="2*" />
 		</Grid.ColumnDefinitions>
 
-		<ListView
+
+		<!--  Master  -->
+
+		<Border
 			Grid.Column="0"
-			HorizontalAlignment="Stretch"
-			BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-			BorderThickness="0"
-			DisplayMemberPath="Name"
-			ItemsSource="{x:Bind ViewModel.Gins}"
-			SelectedItem="{x:Bind ViewModel.SelectedGin, Mode=TwoWay}">
-		</ListView>
+			BorderBrush="{StaticResource AppBarBorderThemeBrush}"
+			BorderThickness="0,0,1,0">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
 
-		<StackPanel
+				<Border
+					BorderBrush="{StaticResource AppBarBorderThemeBrush}"
+					BorderThickness="0,0,0,1">
+					<CommandBar
+						Margin="0,8,0,8"
+						DefaultLabelPosition="Right">
+						<AppBarButton
+							Command="{x:Bind ViewModel.AddCommand}"
+							Icon="Add"
+							Label="Add">
+						</AppBarButton>
+						<AppBarButton
+							Command="{x:Bind ViewModel.RefreshCommand}"
+							Icon="Refresh"
+							Label="Refresh">
+						</AppBarButton>
+					</CommandBar>
+				</Border>
+
+				<ListView
+					Grid.Row="1"
+					HorizontalAlignment="Stretch"
+					ItemsSource="{x:Bind ViewModel.GinsCollection}"
+					SelectedItem="{x:Bind ViewModel.SelectedGin, Mode=TwoWay}">
+					<ListView.ItemTemplate>
+						<DataTemplate x:DataType="t:GinDto">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<IconSourceElement
+									Grid.Column="0"
+									Margin="0,0,24,0"
+									Foreground="{x:Bind IsDraft, Converter={StaticResource DraftBrushConverter}}"
+									IconSource="{x:Bind IsDraft, Converter={StaticResource DraftSymbolConverter}}">
+								</IconSourceElement>
+								<StackPanel
+									Grid.Column="1"
+									Margin="0,16,0,16"
+									Orientation="Vertical">
+									<TextBlock
+										Style="{StaticResource SubtitleTextBlockStyle}"
+										Text="{x:Bind Name}" />
+									<TextBlock
+										Margin="0,4,0,0"
+										Foreground="{StaticResource ButtonDisabledForegroundThemeBrush}"
+										Text="{x:Bind Teaser}" />
+								</StackPanel>
+							</Grid>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+
+			</Grid>
+		</Border>
+
+
+		<!--  Detail  -->
+
+		<Grid
 			Grid.Column="1"
-			Margin="24"
-			Orientation="Vertical"
 			Visibility="{x:Bind ViewModel.SelectedGin, Mode=OneWay, Converter={StaticResource HideWhenNullConverter}}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
 
-			<CommandBar DefaultLabelPosition="Right">
-				<AppBarButton
-					Command="{x:Bind ViewModel.AddCommand}"
-					Icon="Add"
-					Label="Add">
-				</AppBarButton>
-				<AppBarButton
-					Command="{x:Bind ViewModel.DeleteCommand}"
-					Icon="Delete"
-					Label="Delete">
-				</AppBarButton>
-			</CommandBar>
+			<Border
+				Grid.Row="0"
+				Margin="0,0,48,0"
+				BorderBrush="{StaticResource AppBarBorderThemeBrush}"
+				BorderThickness="0,0,0,0">
+				<CommandBar
+					Margin="0,8,0,8"
+					DefaultLabelPosition="Right">
+					<AppBarButton
+						Command="{x:Bind ViewModel.EditCommand}"
+						Icon="Edit"
+						Label="Edit">
+					</AppBarButton>
+					<AppBarButton
+						Command="{x:Bind ViewModel.DeleteCommand}"
+						Icon="Delete"
+						Label="Delete">
+					</AppBarButton>
+					<AppBarToggleButton
+						Command="{x:Bind ViewModel.PublishCommand}"
+						Icon="Pin"
+						Label="Publish">
+					</AppBarToggleButton>
+					<AppBarButton
+						Command="{x:Bind ViewModel.UnPublishCommand}"
+						Icon="UnPin"
+						Label="Un-Publish">
+					</AppBarButton>
+				</CommandBar>
+			</Border>
 
-			<TextBox
-				Header="Name"
-				Text="{x:Bind ViewModel.SelectedGin.Name, Mode=TwoWay, FallbackValue=''}">
-			</TextBox>
-			<TextBox
-				Margin="0,20,0,0"
-				Header="Teaser"
-				Text="{x:Bind ViewModel.SelectedGin.Teaser, Mode=TwoWay, FallbackValue=''}">
-			</TextBox>
-			<TextBox
-				Margin="0,20,0,0"
-				Header="Images"
-				Text="{x:Bind ViewModel.SelectedGin.ImagesAsText, Mode=TwoWay, FallbackValue=''}">
-			</TextBox>
+			<StackPanel
+				Grid.Row="1"
+				Margin="48,16,48,48"
+				Orientation="Vertical">
 
-			<Button
-				Margin="0,20,0,0"
-				HorizontalAlignment="Right"
-				AccessKey="S"
-				Command="{x:Bind ViewModel.SaveCommand}"
-				Content="Save"
-				Style="{StaticResource AccentButtonStyle}">
-			</Button>
+				<TextBox
+					Header="Name"
+					Text="{x:Bind ViewModel.SelectedGin.Name, Mode=TwoWay, FallbackValue=''}">
+				</TextBox>
+				<TextBox
+					Margin="0,32,0,0"
+					Header="Teaser"
+					Text="{x:Bind ViewModel.SelectedGin.Teaser, Mode=TwoWay, FallbackValue=''}">
+				</TextBox>
+				<TextBox
+					Margin="0,16,0,0"
+					Header="Images"
+					Text="{x:Bind ViewModel.SelectedGin.ImagesAsText, Mode=TwoWay, FallbackValue=''}">
+				</TextBox>
 
-		</StackPanel>
+				<Button
+					Margin="0,24,0,0"
+					HorizontalAlignment="Right"
+					AccessKey="S"
+					Command="{x:Bind ViewModel.SaveCommand}"
+					Content="Save"
+					Style="{StaticResource AccentButtonStyle}">
+				</Button>
+
+			</StackPanel>
+
+
+		</Grid>
+
 
 	</Grid>
 
