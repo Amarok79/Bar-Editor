@@ -8,19 +8,13 @@ namespace Bar.Pages;
 
 public sealed partial class GinsPage : Page
 {
-    public GinsPageViewModel ViewModel => (GinsPageViewModel) DataContext;
+    public GinsPageVm ViewModel => (GinsPageVm) DataContext;
 
 
     public GinsPage()
     {
         InitializeComponent();
 
-        DataContext = App.Current.CreateViewModel<GinsPageViewModel>();
-        Loaded += _GinsPage_Loaded;
-    }
-
-    private void _GinsPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        ViewModel.XamlRoot = XamlRoot;
+        DataContext = App.Current.CreateViewModel<GinsPageVm>();
     }
 }

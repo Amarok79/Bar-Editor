@@ -32,7 +32,7 @@
 
 	<i:Interaction.Behaviors>
 		<ic:EventTriggerBehavior EventName="Loaded">
-			<ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadGinsCommand}" />
+			<ic:InvokeCommandAction Command="{x:Bind ViewModel.RefreshCommand}" />
 		</ic:EventTriggerBehavior>
 	</i:Interaction.Behaviors>
 
@@ -77,10 +77,10 @@
 				<ListView
 					Grid.Row="1"
 					HorizontalAlignment="Stretch"
-					ItemsSource="{x:Bind ViewModel.GinsCollection}"
-					SelectedItem="{x:Bind ViewModel.SelectedGin, Mode=TwoWay}">
+					ItemsSource="{x:Bind ViewModel.ItemsView}"
+					SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}">
 					<ListView.ItemTemplate>
-						<DataTemplate x:DataType="t:GinDto">
+						<DataTemplate x:DataType="t:GinVm">
 							<Grid>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="Auto" />
@@ -89,8 +89,8 @@
 								<IconSourceElement
 									Grid.Column="0"
 									Margin="0,0,24,0"
-									Foreground="{x:Bind IsDraft, Converter={StaticResource DraftBrushConverter}}"
-									IconSource="{x:Bind IsDraft, Converter={StaticResource DraftSymbolConverter}}">
+									Foreground="{x:Bind IsDraft, Mode=OneWay, Converter={StaticResource DraftBrushConverter}}"
+									IconSource="{x:Bind IsDraft, Mode=OneWay, Converter={StaticResource DraftSymbolConverter}}">
 								</IconSourceElement>
 								<StackPanel
 									Grid.Column="1"
@@ -98,11 +98,11 @@
 									Orientation="Vertical">
 									<TextBlock
 										Style="{StaticResource SubtitleTextBlockStyle}"
-										Text="{x:Bind Name}" />
+										Text="{x:Bind Name, Mode=OneWay}" />
 									<TextBlock
 										Margin="0,4,0,0"
 										Foreground="{StaticResource ButtonDisabledForegroundThemeBrush}"
-										Text="{x:Bind Teaser}" />
+										Text="{x:Bind Teaser, Mode=OneWay}" />
 								</StackPanel>
 							</Grid>
 						</DataTemplate>
@@ -117,7 +117,7 @@
 
 		<Grid
 			Grid.Column="1"
-			Visibility="{x:Bind ViewModel.SelectedGin, Mode=OneWay, Converter={StaticResource HideWhenNullConverter}}">
+			Visibility="{x:Bind ViewModel.SelectedItem, Mode=OneWay, Converter={StaticResource HideWhenNullConverter}}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -134,21 +134,25 @@
 					<AppBarButton
 						Command="{x:Bind ViewModel.EditCommand}"
 						Icon="Edit"
+						IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
 						Label="Edit">
 					</AppBarButton>
 					<AppBarButton
 						Command="{x:Bind ViewModel.DeleteCommand}"
+						CommandParameter="{x:Bind}"
 						Icon="Delete"
 						Label="Delete">
 					</AppBarButton>
-					<AppBarToggleButton
+					<AppBarButton
 						Command="{x:Bind ViewModel.PublishCommand}"
 						Icon="Pin"
+						IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
 						Label="Publish">
-					</AppBarToggleButton>
+					</AppBarButton>
 					<AppBarButton
 						Command="{x:Bind ViewModel.UnPublishCommand}"
 						Icon="UnPin"
+						IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
 						Label="Un-Publish">
 					</AppBarButton>
 				</CommandBar>
@@ -161,17 +165,20 @@
 
 				<TextBox
 					Header="Name"
-					Text="{x:Bind ViewModel.SelectedGin.Name, Mode=TwoWay, FallbackValue=''}">
+					IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay}"
+					Text="{x:Bind ViewModel.EditedItem.Name, Mode=TwoWay, FallbackValue=''}">
 				</TextBox>
 				<TextBox
 					Margin="0,32,0,0"
 					Header="Teaser"
-					Text="{x:Bind ViewModel.SelectedGin.Teaser, Mode=TwoWay, FallbackValue=''}">
+					IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay}"
+					Text="{x:Bind ViewModel.EditedItem.Teaser, Mode=TwoWay, FallbackValue=''}">
 				</TextBox>
 				<TextBox
 					Margin="0,16,0,0"
 					Header="Images"
-					Text="{x:Bind ViewModel.SelectedGin.ImagesAsText, Mode=TwoWay, FallbackValue=''}">
+					IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay}"
+					Text="{x:Bind ViewModel.EditedItem.ImagesAsText, Mode=TwoWay, FallbackValue=''}">
 				</TextBox>
 
 				<Button
@@ -180,14 +187,12 @@
 					AccessKey="S"
 					Command="{x:Bind ViewModel.SaveCommand}"
 					Content="Save"
-					Style="{StaticResource AccentButtonStyle}">
+					Style="{StaticResource AccentButtonStyle}"
+					Visibility="{x:Bind ViewModel.InEditMode, Mode=OneWay}">
 				</Button>
 
 			</StackPanel>
-
-
 		</Grid>
-
 
 	</Grid>
 

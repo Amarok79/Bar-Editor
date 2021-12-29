@@ -11,7 +11,10 @@
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
 			</ResourceDictionary.MergedDictionaries>
 
+
 			<t:HideWhenNullConverter x:Key="HideWhenNullConverter" />
+
+			<winui:BoolNegationConverter x:Key="BoolNegationConverter" />
 			<winui:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
 		</ResourceDictionary>
