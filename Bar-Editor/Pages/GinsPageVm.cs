@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,7 +17,6 @@ namespace Bar.Pages;
 
 public class GinsPageVm : ObservableObject
 {
-    private readonly IConfiguration mConfiguration;
     private readonly IFlurlClient mClient;
 
 
@@ -51,16 +49,7 @@ public class GinsPageVm : ObservableObject
         {
             SetProperty(ref mSelectedItem, value);
 
-            if (value is not null)
-            {
-                EditedItem = new GinVm() {
-                    Id      = value.Id,
-                    Name    = value.Name,
-                    Teaser  = value.Teaser,
-                    Images  = value.Images.ToList(),
-                    IsDraft = value.IsDraft,
-                };
-            }
+            EditedItem = value != null ? new GinVm(value) : null;
 
             InEditMode = false;
         }
@@ -87,10 +76,8 @@ public class GinsPageVm : ObservableObject
 
     public GinsPageVm(IConfiguration configuration)
     {
-        mConfiguration = configuration;
-
-        var url    = mConfiguration.GetValue<String>("Backend:Url");
-        var apiKey = mConfiguration.GetValue<String>("Backend:ApiKey");
+        var url    = configuration.GetValue<String>("Backend:Url");
+        var apiKey = configuration.GetValue<String>("Backend:ApiKey");
         mClient = new FlurlClient(url).WithHeader("Api-Key", apiKey);
 
         AddCommand     = new AsyncRelayCommand(_AddAsync);
@@ -110,6 +97,12 @@ public class GinsPageVm : ObservableObject
 
     private async Task _RefreshAsync()
     {
+        InEditMode = false;
+
+        SelectedItem = null;
+        EditedItem   = null;
+
+
         var items = await mClient.Request("/api/gins")
            .SetQueryParam("includeDrafts", "true")
            .GetJsonAsync<GinVm[]>();
@@ -118,9 +111,6 @@ public class GinsPageVm : ObservableObject
 
         foreach (var item in items)
             Items.Add(item);
-
-        InEditMode   = false;
-        SelectedItem = null;
     }
 
     private async Task _AddAsync()
@@ -138,8 +128,8 @@ public class GinsPageVm : ObservableObject
 
         Items.Add(item);
 
-        InEditMode   = true;
         SelectedItem = item;
+        InEditMode = true;
     }
 
 

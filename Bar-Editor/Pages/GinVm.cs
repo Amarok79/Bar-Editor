@@ -56,6 +56,20 @@ public sealed class GinVm : ObservableValidator, IEquatable<GinVm>
     }
 
 
+    public GinVm()
+    {
+    }
+
+    public GinVm(GinVm value)
+    {
+        Id      = value.Id;
+        Name    = value.Name;
+        Teaser  = value.Teaser;
+        Images  = value.Images.ToList();
+        IsDraft = value.IsDraft;
+    }
+
+
     public Boolean Equals(GinVm? other)
     {
         if (ReferenceEquals(null, other))
