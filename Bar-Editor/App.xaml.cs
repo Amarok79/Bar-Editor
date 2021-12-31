@@ -17,6 +17,10 @@ public partial class App : Application
     public new static App Current => (App) Application.Current;
 
 
+    public Window MainWindow => mWindow!;
+
+    public XamlRoot XamlRoot => mWindow!.Content.XamlRoot;
+
     public IConfigurationRoot Configuration { get; }
 
     public IServiceProvider Services { get; }

@@ -132,14 +132,13 @@
 					Margin="0,8,0,8"
 					DefaultLabelPosition="Right">
 					<AppBarButton
-						Command="{x:Bind ViewModel.EditCommand}"
+						Command="{x:Bind ViewModel.BeginEditCommand}"
 						Icon="Edit"
 						IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
 						Label="Edit">
 					</AppBarButton>
 					<AppBarButton
 						Command="{x:Bind ViewModel.DeleteCommand}"
-						CommandParameter="{x:Bind}"
 						Icon="Delete"
 						Label="Delete">
 					</AppBarButton>
@@ -181,15 +180,23 @@
 					Text="{x:Bind ViewModel.EditedItem.ImagesAsText, Mode=TwoWay, FallbackValue=''}">
 				</TextBox>
 
-				<Button
+				<StackPanel
 					Margin="0,24,0,0"
 					HorizontalAlignment="Right"
-					AccessKey="S"
-					Command="{x:Bind ViewModel.SaveCommand}"
-					Content="Save"
-					Style="{StaticResource AccentButtonStyle}"
-					Visibility="{x:Bind ViewModel.InEditMode, Mode=OneWay}">
-				</Button>
+					Orientation="Horizontal">
+					<Button
+						Command="{x:Bind ViewModel.CancelEditCommand}"
+						Content="Cancel"
+						Visibility="{x:Bind ViewModel.InEditMode, Mode=OneWay}">
+					</Button>
+					<Button
+						Margin="8,0,0,0"
+						Command="{x:Bind ViewModel.SaveCommand}"
+						Content="Save"
+						Style="{StaticResource AccentButtonStyle}"
+						Visibility="{x:Bind ViewModel.InEditMode, Mode=OneWay}">
+					</Button>
+				</StackPanel>
 
 			</StackPanel>
 		</Grid>

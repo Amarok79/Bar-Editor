@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI;
 using Flurl.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 
@@ -24,7 +23,7 @@ public class GinsPageVm : ObservableObject
 
     public IAsyncRelayCommand RefreshCommand { get; }
 
-    public IRelayCommand EditCommand { get; }
+    public IRelayCommand BeginEditCommand { get; }
 
     public IAsyncRelayCommand DeleteCommand { get; }
 
@@ -33,6 +32,8 @@ public class GinsPageVm : ObservableObject
     public IAsyncRelayCommand UnPublishCommand { get; }
 
     public IAsyncRelayCommand SaveCommand { get; }
+
+    public IRelayCommand CancelEditCommand { get; }
 
 
     public ObservableCollection<GinVm> Items { get; } = new();
@@ -83,16 +84,16 @@ public class GinsPageVm : ObservableObject
         AddCommand     = new AsyncRelayCommand(_AddAsync);
         RefreshCommand = new AsyncRelayCommand(_RefreshAsync);
 
-        EditCommand      = new RelayCommand(_Edit);
-        DeleteCommand    = new AsyncRelayCommand<UIElement>(_DeleteAsync);
-        PublishCommand   = new AsyncRelayCommand(_PublishAsync);
-        UnPublishCommand = new AsyncRelayCommand(_UnPublishAsync);
-        SaveCommand      = new AsyncRelayCommand(_SaveAsync);
+        BeginEditCommand  = new RelayCommand(_BeginEdit);
+        CancelEditCommand = new RelayCommand(_CancelEdit);
+        DeleteCommand     = new AsyncRelayCommand(_DeleteAsync);
+        PublishCommand    = new AsyncRelayCommand(_PublishAsync);
+        UnPublishCommand  = new AsyncRelayCommand(_UnPublishAsync);
+        SaveCommand       = new AsyncRelayCommand(_SaveAsync);
 
         ItemsView = new AdvancedCollectionView(Items, true);
         ItemsView.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending));
     }
-
 
 
     private async Task _RefreshAsync()
@@ -117,7 +118,7 @@ public class GinsPageVm : ObservableObject
     {
         var item = new GinVm {
             Id      = Guid.NewGuid(),
-            Name    = "Unnamed",
+            Name    = "New Gin",
             Teaser  = String.Empty,
             Images  = new List<String>(),
             IsDraft = true,
@@ -126,36 +127,47 @@ public class GinsPageVm : ObservableObject
         await mClient.Request("/api/gins", item.Id)
            .PutJsonAsync(item);
 
+
         Items.Add(item);
 
         SelectedItem = item;
-        InEditMode = true;
+        EditedItem   = item;
+        InEditMode   = true;
     }
 
-
-    private void _Edit()
+    private void _BeginEdit()
     {
-        InEditMode = true;
-    }
-
-
-    private async Task _SaveAsync()
-    {
-        if (EditedItem is null)
+        if (SelectedItem == null)
             return;
 
-        await mClient.Request("/api/gins", EditedItem.Id)
-           .PutJsonAsync(EditedItem);
+        InEditMode = true;
+    }
 
-        Items.Remove(EditedItem);
-        Items.Add(EditedItem);
-
+    private void _CancelEdit()
+    {
         InEditMode = false;
     }
 
-    private async Task _DeleteAsync(UIElement? element)
+    private async Task _SaveAsync()
     {
-        if (SelectedItem is null)
+        if (EditedItem == null)
+            return;
+
+        var item = EditedItem;
+
+        await mClient.Request("/api/gins", item.Id)
+           .PutJsonAsync(item);
+
+        Items.Remove(item);
+        Items.Add(item);
+
+        InEditMode = false;
+        SelectedItem = item;
+    }
+
+    private async Task _DeleteAsync()
+    {
+        if (SelectedItem == null)
             return;
 
         var dialog = new ContentDialog {
@@ -163,7 +175,7 @@ public class GinsPageVm : ObservableObject
             Content           = $"Delete '{SelectedItem.Name}'?",
             PrimaryButtonText = "Delete",
             CloseButtonText   = "Cancel",
-            XamlRoot          = element?.XamlRoot,
+            XamlRoot          = App.Current.MainWindow.Content.XamlRoot,
         };
 
         var result = await dialog.ShowAsync();
@@ -175,43 +187,40 @@ public class GinsPageVm : ObservableObject
            .DeleteAsync();
 
         Items.Remove(SelectedItem);
+
+        SelectedItem = null;
+        EditedItem   = null;
+
+        InEditMode = false;
     }
 
     private async Task _PublishAsync()
     {
-        if (SelectedItem is null)
+        if (SelectedItem == null)
             return;
 
-        var gin = await mClient.Request("/api/gins", SelectedItem.Id)
+        var item = await mClient.Request("/api/gins", SelectedItem.Id)
            .GetJsonAsync<GinVm>();
 
-        gin.IsDraft = false;
+        item.IsDraft         = false;
+        SelectedItem.IsDraft = false;
 
-        await mClient.Request("/api/gins", gin.Id)
-           .PutJsonAsync(gin);
-
-        Items.Remove(gin);
-        Items.Add(gin);
-
-        SelectedItem = gin;
+        await mClient.Request("/api/gins", item.Id)
+           .PutJsonAsync(item);
     }
 
     private async Task _UnPublishAsync()
     {
-        if (SelectedItem is null)
+        if (SelectedItem == null)
             return;
 
-        var gin = await mClient.Request("/api/gins", SelectedItem.Id)
+        var item = await mClient.Request("/api/gins", SelectedItem.Id)
            .GetJsonAsync<GinVm>();
 
-        gin.IsDraft = true;
+        item.IsDraft         = true;
+        SelectedItem.IsDraft = true;
 
-        await mClient.Request("/api/gins", gin.Id)
-           .PutJsonAsync(gin);
-
-        Items.Remove(gin);
-        Items.Add(gin);
-
-        SelectedItem = gin;
+        await mClient.Request("/api/gins", item.Id)
+           .PutJsonAsync(item);
     }
 }
