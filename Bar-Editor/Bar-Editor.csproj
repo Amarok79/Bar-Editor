@@ -33,17 +33,17 @@
 		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Behaviors" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-		<PackageReference Include="Flurl.Http" Version="3.2.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+		<PackageReference Include="Flurl.Http" Version="3.2.4" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196" />
-		<PackageReference Include="WinUIEx" Version="1.0.0" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.3" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
+		<PackageReference Include="WinUIEx" Version="1.4.3" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
