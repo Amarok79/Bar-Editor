@@ -1,23 +1,22 @@
 ﻿<Application
-	x:Class="Bar.App"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:t="using:Bar"
-	xmlns:winui="using:CommunityToolkit.WinUI.UI.Converters">
+    x:Class="Bar.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:t="using:Bar"
+    xmlns:winui="using:CommunityToolkit.WinUI.UI.Converters">
 
-	<Application.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-			</ResourceDictionary.MergedDictionaries>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
+            </ResourceDictionary.MergedDictionaries>
 
+            <t:HideWhenNullConverter x:Key="HideWhenNullConverter"/>
 
-			<t:HideWhenNullConverter x:Key="HideWhenNullConverter" />
+            <winui:BoolNegationConverter x:Key="BoolNegationConverter"/>
+            <winui:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
-			<winui:BoolNegationConverter x:Key="BoolNegationConverter" />
-			<winui:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
-		</ResourceDictionary>
-	</Application.Resources>
+        </ResourceDictionary>
+    </Application.Resources>
 
 </Application>

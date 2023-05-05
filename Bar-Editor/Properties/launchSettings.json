@@ -1,10 +1,10 @@
 {
-  "profiles": {
-    "Bar-Editor (Package)": {
-      "commandName": "MsixPackage"
-    },
-    "Bar-Editor (Unpackaged)": {
-      "commandName": "Project"
+    "profiles": {
+        "Bar-Editor (Package)": {
+            "commandName": "MsixPackage"
+        },
+        "Bar-Editor (Unpackaged)": {
+            "commandName": "Project"
+        }
     }
-  }
 }

@@ -3,7 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bar-Editor", "Bar-Editor\Bar-Editor.csproj", "{F39F17A4-6549-4FEE-8C24-4601770CA79C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bar-Editor", "Bar-Editor\Bar-Editor.csproj", "{F39F17A4-6549-4FEE-8C24-4601770CA79C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C77F4882-8F99-4392-A5B9-817F633EF6FB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Bar-Editor.sln.DotSettings = Bar-Editor.sln.DotSettings
+		Directory.Build.props = Directory.Build.props
+		global.json = global.json
+		LICENSE = LICENSE
+		nuget.config = nuget.config
+		README.md = README.md
+		_cleanup.cmd = _cleanup.cmd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

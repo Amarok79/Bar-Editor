@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021, Olaf Kober <olaf.kober@outlook.com>
+﻿// Copyright (c) 2022, Olaf Kober <olaf.kober@outlook.com>
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 
 namespace Bar.Pages;
+
 
 public sealed class GinVm : ObservableValidator, IEquatable<GinVm>
 {
@@ -42,8 +43,8 @@ public sealed class GinVm : ObservableValidator, IEquatable<GinVm>
         get => String.Join(", ", Images);
         set =>
             Images = value.Split(',')
-               .Select(x => x.Trim())
-               .ToList();
+                .Select(x => x.Trim())
+                .ToList();
     }
 
 
@@ -60,28 +61,38 @@ public sealed class GinVm : ObservableValidator, IEquatable<GinVm>
     {
     }
 
-    public GinVm(GinVm value)
+    public GinVm(
+        GinVm value
+    )
     {
-        Id      = value.Id;
-        Name    = value.Name;
-        Teaser  = value.Teaser;
-        Images  = value.Images.ToList();
+        Id = value.Id;
+        Name = value.Name;
+        Teaser = value.Teaser;
+        Images = value.Images.ToList();
         IsDraft = value.IsDraft;
     }
 
 
-    public Boolean Equals(GinVm? other)
+    public Boolean Equals(
+        GinVm? other
+    )
     {
         if (ReferenceEquals(null, other))
+        {
             return false;
+        }
 
         if (ReferenceEquals(this, other))
+        {
             return true;
+        }
 
         return Id.Equals(other.Id);
     }
 
-    public override Boolean Equals(Object? obj)
+    public override Boolean Equals(
+        Object? obj
+    )
     {
         return ReferenceEquals(this, obj) || ( obj is GinVm other && Equals(other) );
     }
@@ -91,12 +102,18 @@ public sealed class GinVm : ObservableValidator, IEquatable<GinVm>
         return Id.GetHashCode();
     }
 
-    public static Boolean operator ==(GinVm? left, GinVm? right)
+    public static Boolean operator ==(
+        GinVm? left,
+        GinVm? right
+    )
     {
         return Equals(left, right);
     }
 
-    public static Boolean operator !=(GinVm? left, GinVm? right)
+    public static Boolean operator !=(
+        GinVm? left,
+        GinVm? right
+    )
     {
         return !Equals(left, right);
     }

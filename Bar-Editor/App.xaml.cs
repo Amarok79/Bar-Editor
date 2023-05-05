@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021, Olaf Kober <olaf.kober@outlook.com>
+﻿// Copyright (c) 2022, Olaf Kober <olaf.kober@outlook.com>
 
 using System;
 using Microsoft.Extensions.Configuration;
@@ -9,17 +9,16 @@ using WinUIEx;
 
 namespace Bar;
 
+
 public partial class App : Application
 {
     private Window? mWindow;
 
 
-    public new static App Current => (App) Application.Current;
+    public new static App Current => (App)Application.Current;
 
 
     public Window MainWindow => mWindow!;
-
-    public XamlRoot XamlRoot => mWindow!.Content.XamlRoot;
 
     public IConfigurationRoot Configuration { get; }
 
@@ -29,12 +28,14 @@ public partial class App : Application
     public App()
     {
         Configuration = _BuildConfiguration();
-        Services      = _BuildServices(Configuration);
+        Services = _BuildServices(Configuration);
 
         InitializeComponent();
     }
 
-    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override void OnLaunched(
+        LaunchActivatedEventArgs args
+    )
     {
         mWindow = new MainWindow();
         mWindow.Activate();
@@ -55,16 +56,18 @@ public partial class App : Application
         var builder = new ConfigurationBuilder();
 
         var root = builder.AddJsonFile("appsettings.json", true)
-           .AddJsonFile("appsettings.Development.json", true)
-           .AddJsonFile("appsettings.Production.json", true)
-           .AddEnvironmentVariables("BAR_")
-           .AddCommandLine(Environment.GetCommandLineArgs())
-           .Build();
+            .AddJsonFile("appsettings.Development.json", true)
+            .AddJsonFile("appsettings.Production.json", true)
+            .AddEnvironmentVariables("BAR_")
+            .AddCommandLine(Environment.GetCommandLineArgs())
+            .Build();
 
         return root;
     }
 
-    private static IServiceProvider _BuildServices(IConfigurationRoot configuration)
+    private static IServiceProvider _BuildServices(
+        IConfigurationRoot configuration
+    )
     {
         var services = new ServiceCollection();
 
