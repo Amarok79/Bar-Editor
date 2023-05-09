@@ -4,4 +4,20 @@
         <Version>0.10.0</Version>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <RootNamespace>Bar</RootNamespace>
+        <Nullable>Enable</Nullable>
+        <ImplicitUsings>Enable</ImplicitUsings>
+        <Deterministic>True</Deterministic>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+        <IsPackable>False</IsPackable>
+        <Nullable>Disable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'True'">
+        <ContinuousIntegrationBuild>True</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
 </Project>

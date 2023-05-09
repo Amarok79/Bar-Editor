@@ -1,9 +1,6 @@
 ﻿// Copyright (c) 2022, Olaf Kober <olaf.kober@outlook.com>
 
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI;
@@ -125,6 +122,7 @@ public class GinsPageVm : ObservableObject
             Id = Guid.NewGuid(),
             Name = "New Gin",
             Teaser = String.Empty,
+            Description = String.Empty,
             Images = new List<String>(),
             IsDraft = true,
         };

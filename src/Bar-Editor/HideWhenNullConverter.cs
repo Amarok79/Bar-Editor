@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2022, Olaf Kober <olaf.kober@outlook.com>
 
-using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 

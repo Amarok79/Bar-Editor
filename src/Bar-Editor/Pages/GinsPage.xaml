@@ -163,6 +163,15 @@
                     IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay}"
                     Text="{x:Bind ViewModel.EditedItem.Teaser, Mode=TwoWay, FallbackValue=''}"/>
                 <TextBox
+                    AcceptsReturn="True"
+                    Margin="0,32,0,0"
+                    Header="Description"
+                    MinHeight="60"
+                    MaxHeight="200"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible"
+                    IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.EditedItem.Description, Mode=TwoWay, FallbackValue=''}"/>
+                <TextBox
                     Margin="0,16,0,0"
                     Header="Images"
                     IsEnabled="{x:Bind ViewModel.InEditMode, Mode=OneWay}"

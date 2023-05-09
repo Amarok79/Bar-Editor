@@ -1,9 +1,6 @@
 ﻿// Copyright (c) 2022, Olaf Kober <olaf.kober@outlook.com>
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 
@@ -32,6 +29,16 @@ public sealed class GinVm : ObservableValidator, IEquatable<GinVm>
     {
         get => mTeaser;
         set => SetProperty(ref mTeaser, value, true);
+    }
+
+
+    private String mDescription = String.Empty;
+
+    [Required]
+    public String Description
+    {
+        get => mDescription;
+        set => SetProperty(ref mDescription, value, true);
     }
 
 
@@ -68,6 +75,7 @@ public sealed class GinVm : ObservableValidator, IEquatable<GinVm>
         Id = value.Id;
         Name = value.Name;
         Teaser = value.Teaser;
+        Description = value.Description;
         Images = value.Images.ToList();
         IsDraft = value.IsDraft;
     }
