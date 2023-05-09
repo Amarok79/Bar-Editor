@@ -184,6 +184,7 @@ public class GinsPageVm : ObservableObject
             Content = $"Delete '{SelectedItem.Name}'?",
             PrimaryButtonText = "Delete",
             CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
             XamlRoot = App.Current.MainWindow.Content.XamlRoot,
         };
 
